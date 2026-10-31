@@ -1,0 +1,72 @@
+env:
+  contexts:
+    - name: averruncus-user
+      urls:
+        - {{TARGET}}
+      includePaths:
+        - {{TARGET}}.*
+      excludePaths:
+{{EXCLUDES}}
+      authentication:
+        method: json
+        parameters:
+          loginRequestUrl: {{LOGIN_URL}}
+          loginRequestBody: '{{LOGIN_BODY}}'
+        verification:
+          method: poll
+          pollUrl: {{VERIFY_URL}}
+          pollMethod: GET
+          loggedInRegex: '{{LOGGED_IN}}'
+          loggedOutRegex: '{{LOGGED_OUT}}'
+      sessionManagement:
+        method: cookie
+      users:
+        - name: averruncus-user
+          credentials:
+            username: {{AUTH_USER}}
+            password: {{AUTH_PASS}}
+  parameters:
+    failOnError: false
+    failOnWarning: false
+    continueOnFailure: true
+    progressToStdout: true
+    maxDuration: 5400
+jobs:
+  - type: spider
+    parameters:
+      context: averruncus-user
+      user: averruncus-user
+      maxDuration: 5
+  - type: spiderAjax
+    parameters:
+      context: averruncus-user
+      user: averruncus-user
+      maxDuration: 8
+      numberOfBrowsers: 2
+      browserId: firefox-headless
+      inScopeOnly: true
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+  - type: activeScan
+    parameters:
+      context: averruncus-user
+      user: averruncus-user
+      policy: Default Policy
+      maxScanDurationInMins: 45
+      maxRuleDurationInMins: 10
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 10
+  - type: report
+    parameters:
+      template: traditional-html-plus
+      reportDir: /zap/wrk/
+      reportFile: auth-user.html
+      reportTitle: Averruncus authenticated ZAP scan
+  - type: report
+    parameters:
+      template: traditional-json-plus
+      reportDir: /zap/wrk/
+      reportFile: auth-user.json
+      reportTitle: Averruncus authenticated ZAP scan

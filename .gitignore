@@ -1,0 +1,5 @@
+reports/
+.venv/
+config.env
+*.har
+__pycache__/
