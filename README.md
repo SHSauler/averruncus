@@ -29,6 +29,19 @@ make xss          # generic stored-XSS + upload rendering test
 All scanners run with `--network host`, so `TARGET_URL=http://127.0.0.1:8080`
 (loopback-published Podman targets) works. Reports land in `$OUT_DIR`.
 
+## Unified reporting
+
+```sh
+make report                          # OUT_DIR -> findings.json/sarif, SUMMARY.md, dashboard.html
+BASELINE=/path/to/prev/findings.json make report   # marks new/persisting, counts fixed
+```
+
+`scripts/report.py` normalizes ZAP + Nuclei + DalFox + XSS outputs into one
+finding model (tool/check/severity/confidence/url), emits SARIF 2.1.0 for
+CI ingestion, a severity rollup (`SUMMARY.md`), and an offline single-file
+`dashboard.html` (sortable, severity filter, no CDN). Findings are keyed by
+(tool, check, URL-path) so reruns diff cleanly against a baseline.
+
 ## Layout
 
 - `config.env.example` — every knob: target, auth, scan bounds, exclusions.

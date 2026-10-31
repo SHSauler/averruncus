@@ -2,10 +2,10 @@ ROOT := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
  -include $(ROOT)config.env
 export
 
-.PHONY: setup new-run zap-baseline zap-full zap-auth nuclei har dalfox xss venv dalfox-build clean help
+.PHONY: setup new-run zap-baseline zap-full zap-auth nuclei har dalfox xss report venv dalfox-build clean help
 
 help:
-	@echo "setup | new-run | zap-baseline | zap-full | zap-auth | nuclei | har | dalfox | xss"
+	@echo "setup | new-run | zap-baseline | zap-full | zap-auth | nuclei | har | dalfox | xss | report"
 
 setup: venv
 	podman pull docker.io/zaproxy/zap-stable:latest
@@ -50,3 +50,6 @@ dalfox-build:
 
 clean:
 	rm -rf $(ROOT).venv
+
+report:
+	bash -c 'set -a; . $(ROOT)config.env; set +a; python3 $(ROOT)scripts/report.py "$$OUT_DIR" $${BASELINE:+--baseline} $${BASELINE:-}'
