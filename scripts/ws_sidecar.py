@@ -72,6 +72,8 @@ if __name__ == "__main__":
     A = os.environ.get("ALICE_CK", "")
     B = os.environ.get("BOB_CK", "")
     G = os.environ.get("GUEST_CK", "")
+    AU, AP = os.environ.get("ALICE_NAME", "alice"), os.environ.get("ALICE_PASS", "")
+    BU, BP = os.environ.get("BOB_NAME", "bob"), os.environ.get("BOB_PASS", "")
     GN = os.environ.get("GUEST_NAME", "wsguest")
 
     # 1. no hello -> server waits then closes (inactivity), must stay alive
@@ -93,8 +95,8 @@ if __name__ == "__main__":
         pass
 
     # 3. alice + bob authenticated sessions
-    wa, da = authed(A, "alice", "TestPass123!")
-    wb, db = authed(B, "bob", "TestPass123!")
+    wa, da = authed(A, AU, AP)
+    wb, db = authed(B, BU, BP)
     rec("alice.authed", any(x[0] == "bin" for x in da), da[:2])
     rec("bob.authed", any(x[0] == "bin" for x in db), db[:2])
 
